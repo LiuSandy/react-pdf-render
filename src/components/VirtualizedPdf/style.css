@@ -1,3 +1,33 @@
-canvas {
-    box-shadow: 0 0 16px rgba(0,0,0,0.16);
-  }
+.toolBus {
+  background: #4b4b4b;
+  line-height: 30px;
+  position:fixed;
+  width: 100%;
+  flex-direction: row;
+  z-index: 1;
+}
+
+.pagination{
+  width: 300px;
+  float: left;
+}
+.zoom {
+  width: 300px;
+  float: left;
+}
+
+input {
+  width: 30px;
+  margin: 0 10px;
+}
+
+.container {
+  position: absolute;
+  top: 30px;
+  justify-content: center;
+  align-items: center;
+}
+.container > canvas {
+  margin: auto;
+  box-shadow: 0 0 16px rgba(0,0,0,0.16);
+}

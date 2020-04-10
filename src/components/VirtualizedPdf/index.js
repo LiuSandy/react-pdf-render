@@ -8,7 +8,7 @@ import './style.css'
 
 pdfjs.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
-const src = 'http://127.0.0.1:9002/p0.pdf';
+const src = 'http://127.0.0.1:9002/p2.pdf';
 
 const firstPageNumber = 1;
 const devicePixelRatio = window.devicePixelRatio;
@@ -19,7 +19,9 @@ const Index = props => {
 
     const [pdf, setPdf] = useState(null);
 
-    const [scale, setScale] = useState(0.5);
+    const [scale, setScale] = useState(1);
+
+    const [currentPage, setCurrentPage] = useState(2)
 
     const getCanvasDom = num => document.querySelector(`canvas[data-page-number='${num + 1}']`)
 
@@ -109,28 +111,69 @@ const Index = props => {
 
     return (
         <div>
-            {pdf && numPages.length ? (
-                <VList
-                    style={{
-                        margin: 'auto'
-                    }}
-                    overscanRowCount={3}
-                    scrollToAlignment="start"
-                    rowCount={numPages?.length}
-                    width={numPages[0].width}
-                    height={numPages[0].height}
-                    rowRenderer={renderItem}
-                    rowHeight={getItemHeight}
-                    onRowsRendered={({
-                        overscanStartIndex,
-                        overscanStopIndex,
-                        startIndex,
-                        stopIndex,
-                    }) => {
-                        renderPdf(startIndex, pdf)
-                    }}
-                />
-            ) : null}
+            <div className="toolBus">
+                <div className='pagination'>
+                    <button
+                        className="toolbarButton pageUp"
+                        title="Previous Page"
+                        id="previous"
+                        disabled={currentPage === 1}
+                        onClick={()=>{
+                            const previousPage = currentPage - 1;
+                            setCurrentPage(previousPage);
+                        }}
+                    >
+                        Previous Page
+                    </button>
+                    <input
+                        type="number"
+                        id="pageNumber"
+                        className="toolbarField pageNumber"
+                        value={currentPage}
+                    />
+                    / {numPages.length}
+                    &nbsp;&nbsp;&nbsp;&nbsp;
+                    <button
+                        className="toolbarButton pageDown"
+                        title="Next Page"
+                        id="next"
+                        disabled={currentPage === numPages.length}
+                        onClick={()=>{
+                            const nextPage = currentPage + 1;
+                            setCurrentPage(nextPage);
+                        }}
+                    >
+                        Next Page
+                    </button>
+                </div>
+            </div>
+            <div className='container'>
+                {pdf && numPages.length ? (
+                    <VList
+                        style={{
+                            margin: 'auto'
+                        }}
+                        overscanRowCount={3}
+                        scrollToAlignment="start"
+                        rowCount={numPages?.length}
+                        width={numPages[0].width}
+                        height={numPages[0].height}
+                        rowRenderer={renderItem}
+                        rowHeight={getItemHeight}
+                        scrollToIndex={currentPage - 1}
+                        onRowsRendered={({
+                            overscanStartIndex,
+                            overscanStopIndex,
+                            startIndex,
+                            stopIndex,
+                        }) => {
+                            renderPdf(startIndex, pdf)
+                            setCurrentPage(stopIndex + 1)
+                        }}
+                    />
+                ) : null}
+            </div>
+
         </div>
     )
 }
