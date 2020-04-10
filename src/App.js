@@ -4,7 +4,7 @@ import VirtualizedPdf from './components/VirtualizedPdf'
 
 const Index = props => {
   // return <PDF />
-  return <PDF />
+  return <VirtualizedPdf />
 }
 
 export default Index;

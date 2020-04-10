@@ -2,10 +2,13 @@ import React, { useState, useEffect } from 'react'
 import pdfjs from 'pdfjs-dist';
 import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.entry';
 import { List as VList } from 'react-virtualized';
+import { TextLayerBuilder } from 'pdfjs-dist/web/pdf_viewer';
+import 'pdfjs-dist/web/pdf_viewer.css';
+import './style.css'
 
 pdfjs.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
-const src = 'http://127.0.0.1:9002/p2.pdf';
+const src = 'http://127.0.0.1:9002/p0.pdf';
 
 const firstPageNumber = 1;
 const devicePixelRatio = window.devicePixelRatio;
@@ -16,14 +19,14 @@ const Index = props => {
 
     const [pdf, setPdf] = useState(null);
 
+    const [scale, setScale] = useState(0.5);
+
     const getCanvasDom = num => document.querySelector(`canvas[data-page-number='${num + 1}']`)
 
     const renderPdf = async (num, curPdf) => {
 
         const page = await curPdf.getPage(num + 1);
-
-        const scale = 1;
-        const viewport = page.getViewport({ scale: scale*devicePixelRatio });
+        const viewport = page.getViewport({ scale: scale * devicePixelRatio });
 
         // Prepare canvas using PDF page dimensions
         const canvas = getCanvasDom(num);
@@ -39,15 +42,35 @@ const Index = props => {
         };
         const renderTask = page.render(renderContext);
 
-        await renderTask.promise;
+        await renderTask.promise.then(() => {
+            return page.getTextContent()
+        }).then(textContent => {
+            renderText(textContent, num, page, viewport)
+        })
+    }
+
+    const renderText = (textContent, num, page, viewport) => {
+        const textLayerDiv = document.querySelector(`div[data-page-number='${num + 1}']`)
+        if (textLayerDiv) {
+            // 创建新的TextLayerBuilder实例
+            const textLayer = new TextLayerBuilder({
+                textLayerDiv,
+                pageIndex: page.pageIndex,
+                viewport,
+            });
+
+            textLayer.setTextContent(textContent);
+
+            textLayer.render();
+        }
     }
 
     const getPageInfo = async (curPdf) => {
 
         const page = await curPdf.getPage(firstPageNumber);
-        const viewport = page.getViewport({ scale: 1 * devicePixelRatio });
-        const width = viewport.width / devicePixelRatio;
-        const height = viewport.height / devicePixelRatio;
+        const viewport = page.getViewport({ scale: scale * devicePixelRatio });
+        const width = viewport.width;
+        const height = viewport.height;
         const array = []
         for (let index = 0; index < curPdf.numPages; index++) {
             array.push({ width, height })
@@ -58,11 +81,17 @@ const Index = props => {
     const getItemHeight = ({ index }) => numPages[index].height;
 
     const renderItem = ({ key, index, style }) => (
-        <canvas
-            key={index}
-            data-page-number={index + 1}
-            style={{...style,margin:5}}
-        />
+        <div key={key} style={{ ...style, border: '1px solid #dddddd' }}>
+            <canvas
+                data-page-number={index + 1}
+                style={{ width: style.width, height: style.height }}
+            />
+            <div
+                data-page-number={index + 1}
+                className="textLayer"
+                style={{ width: style.width, height: style.height }}
+            ></div>
+        </div>
     )
 
     const fetchPdf = async () => {
@@ -82,6 +111,10 @@ const Index = props => {
         <div>
             {pdf && numPages.length ? (
                 <VList
+                    style={{
+                        margin: 'auto'
+                    }}
+                    overscanRowCount={3}
                     scrollToAlignment="start"
                     rowCount={numPages?.length}
                     width={numPages[0].width}
