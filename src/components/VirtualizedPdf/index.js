@@ -4,7 +4,7 @@ import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.entry';
 import { List as VList } from 'react-virtualized';
 import { TextLayerBuilder } from 'pdfjs-dist/web/pdf_viewer';
 import 'pdfjs-dist/web/pdf_viewer.css';
-import './style.css'
+import './style.css';
 
 pdfjs.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
@@ -23,7 +23,6 @@ const Index = props => {
 
     const [currentPage, setCurrentPage] = useState(2)
 
-    const getCanvasDom = num => document.querySelector(`canvas[data-page-number='${num + 1}']`)
 
     const renderPdf = async (num, curPdf) => {
 
@@ -31,7 +30,7 @@ const Index = props => {
         const viewport = page.getViewport({ scale: scale * devicePixelRatio });
 
         // Prepare canvas using PDF page dimensions
-        const canvas = getCanvasDom(num);
+        const canvas = document.querySelector(`canvas[data-page-number='${num + 1}']`);
 
         const context = canvas.getContext('2d');
         canvas.height = viewport.height;
@@ -83,7 +82,7 @@ const Index = props => {
     const getItemHeight = ({ index }) => numPages[index].height;
 
     const renderItem = ({ key, index, style }) => (
-        <div key={key} style={{ ...style, border: '1px solid #dddddd' }}>
+        <div key={key} style={{ ...style, border: '1px solid #dddddd' }} data-index={index}>
             <canvas
                 data-page-number={index + 1}
                 style={{ width: style.width, height: style.height }}
