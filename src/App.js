@@ -1,10 +1,8 @@
 import React from 'react'
-import PDF from './components/PDF'
-import VirtualizedPdf from './components/VirtualizedPdf'
-
+import UploadFile from './pages/uploadFile'
 
 const Index = props => {
-  return <VirtualizedPdf />
+  return <UploadFile />
 }
 
 export default Index;
