@@ -1,0 +1,39 @@
+#viewerContainer {
+    position: absolute;
+    overflow: auto;
+    width: 100%;
+    top: 3rem;
+    bottom: 4rem;
+    left: 0;
+    right: 0;
+}
+
+#viewerContainer #innerContainer .page {
+    box-sizing: content-box;
+}
+
+.toolBus {
+    height: 3rem;
+    background-color: antiquewhite;
+    line-height: 30px;
+    position: fixed;
+    width: 100%;
+    flex-direction: row;
+    z-index: 1;
+}
+
+.toolBus .pagination {
+    width: 400px;
+    float: left;
+    margin: auto;
+}
+
+input {
+    width: 100px;
+    margin: 0 10px;
+}
+
+.selection{
+    width: 300px;
+    float: left;
+}
