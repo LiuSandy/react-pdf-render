@@ -2,42 +2,61 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-## Available Scripts
+## 文件说明
 
-In the project directory, you can run:
+> 本项目原来是为了PDF预览的几种方式创建，后来又添加了大文件分片上传的服务，让整个项目更加灵活
 
-### `yarn start`
+- App.js
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+```react
+import React from 'react'
+// 通过修改引入pages的文件不同显示不同的界面
+// uploadFile 上传文件服务的客户端
+// other PDF 预览页面
+import Other from './pages/other'
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+const Index = props => {
+  return <Other />
+}
 
-### `yarn test`
+export default Index;
+```
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- other/index.js
 
-### `yarn build`
+```react
+import React from 'react'
+// 引入不同的组件
+import { PDFViewer } from '../../components'
 
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
+const url = 'http://127.0.0.1:9002/demo.pdf'
 
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
+const Index = props => {
+    return (<div>
+        <PDFViewer url={url}/>
+    </div>)
+}
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+export default Index;
+```
 
-### `yarn eject`
+- components/index.js
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+> components 是项目的组件目录
+>
+> - PDF 正常的PDF预览方式 实现功能有翻页，缩放
+> - PDFViewer 使用pdf.js 推荐的方式实现预览，实现功能有 翻页 缩放 文字查找高亮显示
+> - Upload 文件上传的组件
+> - VirtualizedPdf 使用react-virtualized实现大文件预览，其实PDFViewer也支持大文件预览
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## 如何使用
 
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+```
+git clone https://github.com/LiuSandy/react-pdf-render.git
+cd react-pdf-render
+npm install / yarn install
+npm start / yarn start
+```
 
 ## Learn More
 
