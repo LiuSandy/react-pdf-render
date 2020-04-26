@@ -1,0 +1,26 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "node 服务端demo",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "lius",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "fs-extra": "^9.0.0",
+    "global": "^4.4.0",
+    "hotnode": "^0.0.8",
+    "koa": "^2.11.0",
+    "koa-body": "^4.1.1",
+    "koa-router": "^8.0.8",
+    "koa2-cors": "^2.0.6",
+    "moment": "^2.24.0",
+    "multer": "^1.4.2",
+    "multiparty": "^4.2.1",
+    "nodemon": "^2.0.3",
+    "shancw-stdout": "^1.0.0"
+  }
+}
