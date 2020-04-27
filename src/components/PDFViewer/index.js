@@ -1,6 +1,7 @@
 import React, { useRef, useEffect, useState } from 'react'
 import pdfjs from 'pdfjs-dist';
-import { PDFLinkService, PDFFindController, PDFViewer, } from 'pdfjs-dist/web/pdf_viewer';
+import {useKeyPress} from '@umijs/hooks';
+import { PDFLinkService, PDFFindController, PDFViewer,DownloadManager } from 'pdfjs-dist/web/pdf_viewer';
 import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.entry';
 import 'pdfjs-dist/web/pdf_viewer.css';
 import './style.css'
@@ -8,8 +9,8 @@ import { getVisibleElements } from './utils'
 
 pdfjs.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
-// 显示文字类型 0 不显示 1 显示
-const TEXT_LAYER_MODE = 1;
+// 显示文字类型 0 不显示 1 显示 2 启用增强
+const TEXT_LAYER_MODE = 2;
 // 是否通过CSS控制放大缩小 true false
 const USE_ONLY_CSS_ZOOM = true
 
@@ -57,9 +58,12 @@ const Index = props => {
             linkService,
             useOnlyCssZoom: USE_ONLY_CSS_ZOOM,
             textLayerMode: TEXT_LAYER_MODE,
+            // renderer:'svg',
             findController,
         });
         linkService.setViewer(newViewer);
+        // 设置初始缩放
+        newViewer.currentScaleValue = scale;
 
         const loadingTask = pdfjs.getDocument({ url });
         loadingTask.promise.then(pdf => {
@@ -72,8 +76,8 @@ const Index = props => {
                 // 判断是否已经渲染完毕
                 const interval = setInterval(() => { loadPdf() }, 1000);
                 function loadPdf() {
-                    newViewer.currentScaleValue = scale;
-                    if (newViewer._pageViewsReady) {
+                    if (newViewer.pageViewsReady) {
+                        // 暂时没有用到
                         const pdfDom = document.getElementById('innerContainer')
                         const pageData = []
                         pdfDom.childNodes.forEach((item, index) => {
@@ -104,16 +108,21 @@ const Index = props => {
         })
     }, [url])
 
-    useEffect(() => {
-        if (viewer) {
-            const searchBar = document.getElementById("searchInput")
-            searchBar.addEventListener('keydown', e => {
-                if (e.keyCode === 13 && viewer.findController) {
-                    viewer.findController.executeCommand('findagain', searcher);
-                }
-            })
-        }
-    }, [viewer, searcher])
+    // useEffect(() => {
+    //     if (viewer) {
+    //         const searchBar = document.getElementById("searchInput")
+    //         searchBar.addEventListener('keydown', e => {
+    //             console.log("searcher",searcher);
+    //             if (e.keyCode === 13 && viewer.findController) {
+    //                 viewer.findController.executeCommand('findagain', searcher);
+    //             }
+    //         })
+    //     }
+    // }, [])
+
+    useKeyPress('enter', event => {
+        viewer.findController.executeCommand('findagain', searcher);
+      });
 
     useEffect(() => {
         window.addEventListener('updatefindcontrolstate', e => {
@@ -211,9 +220,6 @@ const Index = props => {
                 id="viewerContainer"
                 className="viewerContainer"
                 ref={containerRef}
-            // onScrollCapture={()=>{
-            //     scrollPages()
-            // }}
             >
                 <div
                     className="pdfViewer"
