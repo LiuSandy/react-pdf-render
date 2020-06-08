@@ -1,3 +1,4 @@
+
 #viewerContainer {
     position: absolute;
     overflow: auto;
@@ -8,7 +9,7 @@
     right: 0;
 }
 
-#viewerContainer #innerContainer .page {
+.page {
     box-sizing: content-box;
 }
 
@@ -33,7 +34,27 @@ input {
     margin: 0 10px;
 }
 
-.selection{
+.selection {
     width: 300px;
     float: left;
+}
+
+.otherViewer {
+    width: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    display: block;
+    margin: auto;
+}
+
+.otherViewer .page {
+    direction: ltr;
+    width: 816px;
+    height: 1056px;
+    margin: 1px auto -8px auto;
+    position: relative;
+    overflow: visible;
+    border: 9px solid transparent;
+    background-clip: content-box;
 }

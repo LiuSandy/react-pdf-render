@@ -1,16 +1,16 @@
 import React, { useRef, useEffect, useState } from 'react'
 import pdfjs from 'pdfjs-dist';
-import {useKeyPress} from '@umijs/hooks';
-import { PDFLinkService, PDFFindController, PDFViewer,DownloadManager } from 'pdfjs-dist/web/pdf_viewer';
+import { useKeyPress } from '@umijs/hooks';
+import { PDFLinkService, PDFFindController, PDFViewer, DownloadManager } from 'pdfjs-dist/web/pdf_viewer';
 import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.entry';
 import 'pdfjs-dist/web/pdf_viewer.css';
 import './style.css'
-import { getVisibleElements } from './utils'
+import { getVisibleElements } from './utils';
 
 pdfjs.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
 // 显示文字类型 0 不显示 1 显示 2 启用增强
-const TEXT_LAYER_MODE = 2;
+const TEXT_LAYER_MODE = 0;
 // 是否通过CSS控制放大缩小 true false
 const USE_ONLY_CSS_ZOOM = true
 
@@ -77,7 +77,7 @@ const Index = props => {
                 const interval = setInterval(() => { loadPdf() }, 1000);
                 function loadPdf() {
                     if (newViewer.pageViewsReady) {
-                        // 暂时没有用到
+                        // // 暂时没有用到
                         const pdfDom = document.getElementById('innerContainer')
                         const pageData = []
                         pdfDom.childNodes.forEach((item, index) => {
@@ -108,21 +108,9 @@ const Index = props => {
         })
     }, [url])
 
-    // useEffect(() => {
-    //     if (viewer) {
-    //         const searchBar = document.getElementById("searchInput")
-    //         searchBar.addEventListener('keydown', e => {
-    //             console.log("searcher",searcher);
-    //             if (e.keyCode === 13 && viewer.findController) {
-    //                 viewer.findController.executeCommand('findagain', searcher);
-    //             }
-    //         })
-    //     }
-    // }, [])
-
     useKeyPress('enter', event => {
         viewer.findController.executeCommand('findagain', searcher);
-      });
+    });
 
     useEffect(() => {
         window.addEventListener('updatefindcontrolstate', e => {
@@ -133,8 +121,24 @@ const Index = props => {
         })
     })
 
+
+    const getPageStyle = (div) => {
+        const demo = window.getComputedStyle(div, null);
+        let divStyles = {}
+        Object.keys(demo).forEach(key => {
+
+            if (`${key}` !== '0' && !parseInt(key) && demo[key]) {
+                divStyles = {
+                    ...divStyles,
+                    [`${key}`]: demo[key]
+                }
+            }
+        })
+        return divStyles
+    }
+
     return (
-        <div>
+        <div className="viewer">
             <div className="toolBus">
                 <div className='pagination'>
                     <button
@@ -225,7 +229,13 @@ const Index = props => {
                     className="pdfViewer"
                     id="innerContainer"
                 />
+                <div className="otherViewer">
+                    {pageData.map((page,index)=>(
+                        <div className="page">{index}</div>
+                    ))}
+                </div>
             </div>
+
         </div>
     )
 }
