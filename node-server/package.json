@@ -9,7 +9,7 @@
   "author": "lius",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "fs-extra": "^9.0.0",
     "global": "^4.4.0",
     "hotnode": "^0.0.8",
